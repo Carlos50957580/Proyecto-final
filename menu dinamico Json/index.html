@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Dinamico</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background-color: #555;
+        }
+
+        .submenu {
+            display: inline-block; 
+            margin-left: 20px;
+        }
+
+        .submenu a {
+            color: lightgray; 
+        }
+
+        .menu-form {
+            margin: 20px;
+        }
+
+        .menu-form form {
+            display: flex;
+            gap: 10px;
+        }
+
+        .menu-form input {
+            padding: 8px;
+            font-size: 16px;
+        }
+
+        .menu-form button {
+            padding: 8px;
+            background-color: blue;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .menu-form button:hover {
+            background-color: darkblue;
+        }
+
+        @media screen and (max-width: 600px) {
+            nav a {
+                display: block;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="menu-dinamico">
+
+    </nav>
+
+    <!-- formulario para agregar opciones al menu -->
+    <div class="menu-form">
+        <h2>Agregar Opción de Menú</h2>
+        <form id="menuForm">
+            <input type="text" id="nombre" placeholder="Nombre" required />
+            <input type="text" id="enlace" placeholder="Enlace" required />
+            <input type="text" id="icono" placeholder="Icono (Opcional)" />
+            <button type="submit">Agregar Opcion</button>
+        </form>
+    </div>
+
+    <script>
+        let menuData = {
+            "menu": [
+                {
+                    "id": 1,
+                    "nombre": "Inicio",
+                    "enlace": "/inicio",
+                    "icono": "home",
+                    "submenu": []
+                },
+                {
+                    "id": 2,
+                    "nombre": "Sobre Nosotros",
+                    "enlace": "/sobre-nosotros",
+                    "icono": "info-circle",
+                    "submenu": []
+                },
+                {
+                    "id": 3,
+                    "nombre": "Servicios",
+                    "enlace": "/servicios",
+                    "icono": "briefcase",
+                    "submenu": [
+                        {
+                            "id": 31,
+                            "nombre": "Consultoría",
+                            "enlace": "/servicios/consultoria"
+                        },
+                        {
+                            "id": 32,
+                            "nombre": "Desarrollo",
+                            "enlace": "/servicios/desarrollo"
+                        }
+                    ]
+                },
+                {
+                    "id": 4,
+                    "nombre": "Contacto",
+                    "enlace": "/contacto",
+                    "icono": "phone",
+                    "submenu": []
+                }
+            ]
+        };
+
+        // Cargar y generar el menu
+        document.addEventListener('DOMContentLoaded', () => {
+            generarMenu(menuData.menu);
+        });
+
+        //  generar el menu en el DOM
+        function generarMenu(menuItems) {
+            const menuContainer = document.getElementById('menu-dinamico');
+            menuContainer.innerHTML = ''; // Limpiar contenido previo
+
+            menuItems.forEach(item => {
+                const menuItem = document.createElement('a');
+                menuItem.href = item.enlace;
+                menuItem.innerHTML = `<i class="fas fa-${item.icono}"></i> ${item.nombre}`;
+                
+                menuContainer.appendChild(menuItem);
+
+                // generar submenu 
+                if (item.submenu && item.submenu.length > 0) {
+                    const subMenu = document.createElement('div');
+                    subMenu.classList.add('submenu');
+                    item.submenu.forEach(subItem => {
+                        const subMenuItem = document.createElement('a');
+                        subMenuItem.href = subItem.enlace;
+                        subMenuItem.textContent = subItem.nombre;
+                        subMenu.appendChild(subMenuItem);
+                    });
+                    menuContainer.appendChild(subMenu);
+                }
+            });
+        }
+
+        // agregar opcion al menu
+        document.getElementById('menuForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            const nombre = document.getElementById('nombre').value;
+            const enlace = document.getElementById('enlace').value;
+            const icono = document.getElementById('icono').value || 'link'; // Icono por defecto
+
+            const nuevaOpcion = {
+                id: Date.now(),  // genera ID unico basado en la fecha actual
+                nombre: nombre,
+                enlace: enlace,
+                icono: icono,
+                submenu: []
+            };
+
+            
+            menuData.menu.push(nuevaOpcion);
+
+            generarMenu(menuData.menu);
+           
+            document.getElementById('menuForm').reset();
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario de Múltiples Páginas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+           
+        }
+        .form-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 400px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .active {
+            display: block;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input[type="text"], input[type="date"], input[type="number"], select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #datosGuardados {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Formulario de Múltiples Páginas</h1>
+    
+    <form id="multiStepForm">
+        <!-- pagina 1: datos Personales -->
+        <div class="page active" id="page1">
+            <h2>Datos Personales</h2>
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre" required>
+            <br>
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido" required>
+            <br>
+            <label for="fechaNacimiento">Fecha de Nacimiento:</label>
+            <input type="date" id="fechaNacimiento" name="fechaNacimiento" required>
+            <br>
+            <label for="genero">Género:</label>
+            <select id="genero" name="genero">
+                <option value="masculino">Masculino</option>
+                <option value="femenino">Femenino</option>
+            </select>
+            <br>
+            <button type="button" onclick="nextPage(2)">Siguiente</button>
+        </div>
+
+        <!-- pagina 2: familiares -->
+        <div class="page" id="page2">
+            <h2>Familiares</h2>
+            <label for="nombreFamiliar">Nombre:</label>
+            <input type="text" id="nombreFamiliar" name="nombreFamiliar">
+            <br>
+            <label for="parentesco">Parentesco:</label>
+            <input type="text" id="parentesco" name="parentesco">
+            <br>
+            <label for="edadFamiliar">Edad:</label>
+            <input type="number" id="edadFamiliar" name="edadFamiliar">
+            <br>
+            <button type="button" onclick="prevPage(1)">Anterior</button>
+            <button type="button" onclick="nextPage(3)">Siguiente</button>
+        </div>
+
+        <!-- pagina 3: condiciones Pre-existentes -->
+        <div class="page" id="page3">
+            <h2>Condiciones de Salud</h2>
+            <label for="enfermedad">Enfermedad:</label>
+            <input type="text" id="enfermedad" name="enfermedad">
+            <br>
+            <label for="tiempoEnfermedad">Tiempo con la Enfermedad:</label>
+            <input type="text" id="tiempoEnfermedad" name="tiempoEnfermedad">
+            <br>
+            <button type="button" onclick="prevPage(2)">Anterior</button>
+            <button type="button" onclick="nextPage(4)">Siguiente</button>
+        </div>
+
+        <!-- pagina 4: internamientos realizados -->
+        <div class="page" id="page4">
+            <h2>Internamientos</h2>
+            <label for="fechaInternamiento">Fecha:</label>
+            <input type="date" id="fechaInternamiento" name="fechaInternamiento">
+            <br>
+            <label for="centroMedico">Centro Médico:</label>
+            <input type="text" id="centroMedico" name="centroMedico">
+            <br>
+            <label for="diagnostico">Diagnóstico:</label>
+            <input type="text" id="diagnostico" name="diagnostico">
+            <br>
+            <button type="button" onclick="prevPage(3)">Anterior</button>
+            <button type="submit">Finalizar</button>
+        </div>
+    </form>
+
+    <script>
+        // JSON para almacenar los datos temporalmente
+        let formData = {
+            persona: {},
+            familiares: [],
+            condicionesSalud: [],
+            internamientos: []
+        };
+
+        let currentPage = 1;
+
+        // funcion para avanzar a la siguiente pagina
+        function nextPage(page) {
+            document.getElementById(`page${currentPage}`).classList.remove('active');
+            currentPage = page;
+            document.getElementById(`page${currentPage}`).classList.add('active');
+        }
+
+        // funcion para regresar a la pagina anterior
+        function prevPage(page) {
+            document.getElementById(`page${currentPage}`).classList.remove('active');
+            currentPage = page;
+            document.getElementById(`page${currentPage}`).classList.add('active');
+        }
+
+        // captura de datos y manejo de envio de formulario
+        document.getElementById('multiStepForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            
+            // obtener los datos de cada pagina y guardarlos en el objeto formData
+            formData.persona = {
+                nombre: document.getElementById('nombre').value,
+                apellido: document.getElementById('apellido').value,
+                fechaNacimiento: document.getElementById('fechaNacimiento').value,
+                genero: document.getElementById('genero').value
+            };
+
+            formData.familiares.push({
+                nombre: document.getElementById('nombreFamiliar').value,
+                parentesco: document.getElementById('parentesco').value,
+                edad: document.getElementById('edadFamiliar').value
+            });
+
+            formData.condicionesSalud.push({
+                enfermedad: document.getElementById('enfermedad').value,
+                tiempo: document.getElementById('tiempoEnfermedad').value
+            });
+
+            formData.internamientos.push({
+                fecha: document.getElementById('fechaInternamiento').value,
+                centroMedico: document.getElementById('centroMedico').value,
+                diagnostico: document.getElementById('diagnostico').value
+            });
+
+            // mostrar los datos en la consola
+            console.log('Datos del formulario:', formData);
+            alert('Formulario enviado correctamente');
+        });
+    </script>
+</body>
+</html>
